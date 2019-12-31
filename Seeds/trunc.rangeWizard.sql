@@ -1,0 +1,4 @@
+TRUNCATE
+  charts,
+  ranges
+  RESTART IDENTITY CASCADE;
