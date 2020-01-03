@@ -7,9 +7,10 @@ const RangesService = {
       .select('*');
   },
 
-  createRange(db, data) {
+  createRanges(db, data) {
     return db('ranges')
-      .insert(data);
+      .insert(data)
+      .returning('*');
   },
 
   editById(db, id, newData) {

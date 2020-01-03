@@ -14,9 +14,9 @@ rangesRouter
       .catch(next);
   })
   .post(jsonBodyParser, (req, res, next) => {
-    rangesService.createRange(req.app.get('db'), req.params.id)
-      .then(newRange => {
-        res.json(newRange);
+    rangesService.createRanges(req.app.get('db'), req.body)
+      .then(newRanges => {
+        res.json(newRanges);
       })
       .catch(next);
   });
