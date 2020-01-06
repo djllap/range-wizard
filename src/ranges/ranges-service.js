@@ -7,6 +7,12 @@ const RangesService = {
       .select('*');
   },
 
+  getById(db, id) {
+    return db('ranges')
+      .select('*')
+      .where('id', id);
+  },
+
   createRanges(db, data) {
     return db('ranges')
       .insert(data)
@@ -16,7 +22,8 @@ const RangesService = {
   editById(db, id, newData) {
     return db('ranges')
       .where('id', id)
-      .update(newData);
+      .update(newData)
+      .returning('*');
   },
 
   deleteById(db, id) {
@@ -25,5 +32,9 @@ const RangesService = {
       .delete();
   }
 };
+
+function normalizeRangeData(data) {
+  
+}
 
 module.exports = RangesService;

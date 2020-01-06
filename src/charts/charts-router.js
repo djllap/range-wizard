@@ -4,7 +4,6 @@ const chartsService = require('./charts-service');
 const chartsRouter = express.Router();
 const jsonBodyParser = express.json();
 
-
 chartsRouter
   .route('/')
   .get((req, res, next) => {
@@ -15,9 +14,25 @@ chartsRouter
       .catch(next);
   })
   .post(jsonBodyParser, (req, res, next) => {
-    chartsService.createChart(req.app.get('db'), req.body)
-      .then(newChart => {
-        res.json(newChart);
+    if (!req.body.chart_name) {
+      res.status(400).send({error: {message: 'Chart must have a name'}})
+    }
+    chartsService.getChartWithName(req.app.get('db'), req.body.chart_name)
+      .then(chartsWithName => {
+        if(chartsWithName.length > 0) {
+          const error =  {error: {
+            message: `You already have a chart with the name "${req.body.chart_name}"`
+          }};
+          res.status(400).send(error);
+        }
+        throw 'Charts must have a unique name'
+      }) 
+      .then(() => {
+        chartsService.createChart(req.app.get('db'), req.body)
+          .then(newChart => {
+            res.json(newChart);
+          })
+          .catch(next);
       })
   });
 
@@ -39,11 +54,26 @@ chartsRouter
       .catch(next);
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    chartsService.editById(req.app.get('db'), req.params.id, req.body)
-      .then(editedChart => {
-        res.json(editedChart);
+    if (!req.body.chart_name) {
+      res.status(400).send({error: {message: 'Chart must have a name'}})
+    }
+    chartsService.getChartWithName(req.app.get('db'), req.body.chart_name)
+      .then(chartsWithName => {
+        if(chartsWithName.length > 0) {
+          const error =  {error: {
+            message: `You already have a chart with the name "${req.body.chart_name}"`
+          }};
+          res.status(400).send(error);
+        }
+        throw 'Charts must have a unique name'
+      }) 
+      .then(() => {
+        chartsService.editById(req.app.get('db'), req.params.id, req.body)
+          .then(editedChart => {
+            res.json(editedChart);
+          })
+          .catch(next);
       })
-      .catch(next);
   });
 
 chartsRouter
@@ -74,6 +104,5 @@ async function checkChartExists(req, res, next) {
     next(error);
   }
 }
-
 
 module.exports = chartsRouter;

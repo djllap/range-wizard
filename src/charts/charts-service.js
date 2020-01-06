@@ -9,13 +9,20 @@ const ChartsService = {
   },
 
   createChart(db, data) {
+    const chart = normalizeChartData(data);
     return db('charts')
-      .insert(data)
+      .insert(chart)
       .returning('*')
       .then(([chart]) => chart)
       .then(chart => 
         ChartsService.getById(db, chart.id)
       );
+  },
+
+  getChartWithName(db, name) {
+    return db('charts')
+      .select('id')
+      .where('chart_name', name);
   },
 
   getById(db, id) {
@@ -31,9 +38,10 @@ const ChartsService = {
   },
 
   editById(db, id, newData) {
+    const chart = normalizeChartData(newData);
     return db('charts')
       .where('id', id)
-      .update(newData)
+      .update(chart)
       .returning('*')
       .then(([chart]) => chart)
       .then(chart => 
@@ -53,5 +61,10 @@ const ChartsService = {
   }
 
 };
+
+function normalizeChartData(data) {
+  const { chart_name, id } = data;
+  return { chart_name, id };
+}
 
 module.exports = ChartsService; 

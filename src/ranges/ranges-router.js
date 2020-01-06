@@ -19,7 +19,10 @@ rangesRouter
         res.json(newRanges);
       })
       .catch(next);
-  });
+  })
+  .patch(jsonBodyParser, (req, res, next) => {
+    // rangesService
+  })
 
 rangesRouter
   .route('/:id')
