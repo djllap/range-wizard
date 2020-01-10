@@ -8,8 +8,7 @@ const ChartsService = {
       .select('charts.id', 'charts.chart_name');
   },
 
-  createChart(db, data) {
-    const chart = normalizeChartData(data);
+  createChart(db, chart) {
     return db('charts')
       .insert(chart)
       .returning('*')
@@ -37,8 +36,7 @@ const ChartsService = {
       .delete();
   },
 
-  editById(db, id, newData) {
-    const chart = normalizeChartData(newData);
+  editById(db, id, chart) {
     return db('charts')
       .where('id', id)
       .update(chart)
@@ -61,10 +59,5 @@ const ChartsService = {
   }
 
 };
-
-function normalizeChartData(data) {
-  const { chart_name, id } = data;
-  return { chart_name, id };
-}
 
 module.exports = ChartsService; 

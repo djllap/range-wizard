@@ -13,28 +13,24 @@ const RangesService = {
       .where('id', id);
   },
 
-  createRanges(db, data) {
+  createRanges(db, ranges) {
     return db('ranges')
-      .insert(data)
+      .insert(ranges)
       .returning('*');
   },
 
-  editById(db, id, newData) {
+  editById(db, id, range) {
     return db('ranges')
       .where('id', id)
-      .update(newData)
+      .update(range)
       .returning('*');
   },
 
   deleteById(db, id) {
-    return DataView('ranges')
+    return db('ranges')
       .where('id', id)
       .delete();
   }
 };
-
-function normalizeRangeData(data) {
-  
-}
 
 module.exports = RangesService;

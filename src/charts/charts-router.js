@@ -14,26 +14,13 @@ chartsRouter
       .catch(next);
   })
   .post(jsonBodyParser, (req, res, next) => {
-    if (!req.body.chart_name) {
-      res.status(400).send({error: {message: 'Chart must have a name'}})
-    }
-    chartsService.getChartWithName(req.app.get('db'), req.body.chart_name)
-      .then(chartsWithName => {
-        if(chartsWithName.length > 0) {
-          const error =  {error: {
-            message: `You already have a chart with the name "${req.body.chart_name}"`
-          }};
-          res.status(400).send(error);
-        }
-        throw 'Charts must have a unique name'
-      }) 
-      .then(() => {
-        chartsService.createChart(req.app.get('db'), req.body)
-          .then(newChart => {
-            res.json(newChart);
-          })
-          .catch(next);
+    normalizeChartData(req.body);
+    validateChartData(req.body, res);
+    chartsService.createChart(req.app.get('db'), req.body)
+      .then(newChart => {
+        res.json(newChart);
       })
+      .catch(next);
   });
 
 chartsRouter
@@ -54,26 +41,13 @@ chartsRouter
       .catch(next);
   })
   .patch(jsonBodyParser, (req, res, next) => {
-    if (!req.body.chart_name) {
-      res.status(400).send({error: {message: 'Chart must have a name'}})
-    }
-    chartsService.getChartWithName(req.app.get('db'), req.body.chart_name)
-      .then(chartsWithName => {
-        if(chartsWithName.length > 0) {
-          const error =  {error: {
-            message: `You already have a chart with the name "${req.body.chart_name}"`
-          }};
-          res.status(400).send(error);
-        }
-        throw 'Charts must have a unique name'
-      }) 
-      .then(() => {
-        chartsService.editById(req.app.get('db'), req.params.id, req.body)
-          .then(editedChart => {
-            res.json(editedChart);
-          })
-          .catch(next);
+    normalizeChartData(req.body);
+    validateChartData(req.body, res);
+    chartsService.editById(req.app.get('db'), req.params.id, req.body)
+      .then(editedChart => {
+        res.json(editedChart);
       })
+      .catch(next);
   });
 
 chartsRouter
@@ -103,6 +77,23 @@ async function checkChartExists(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
+
+function validateChartData(chart, res) {
+  if (!chart.chart_name) { 
+    res.statusMessage = "Chart name must be included";
+    res.status(400).send('')
+  }
+
+  if (typeof chart.chart_name !== 'string') {
+    res.statusMessage = 'Chart name must be a string';
+    return res.status(400).send('');
+  }
+}
+
+function normalizeChartData(data) {
+  const { chart_name } = data;
+  return { chart_name };
 }
 
 module.exports = chartsRouter;
