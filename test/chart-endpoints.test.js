@@ -135,7 +135,7 @@ describe('App', () => {
         .expect(res => {
           const ranges = res.body;
           expect(ranges).to.have.lengthOf(2);
-          ranges.forEach((range, i) => {
+          ranges.forEach(range => {
             expect(range.chart_id).to.equal(1);
           });
         });
