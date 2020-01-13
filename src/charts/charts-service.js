@@ -51,6 +51,7 @@ const ChartsService = {
     return db('ranges')
       .select(
         'ranges.id',
+        'ranges.chart_id',
         'ranges.range_name',
         'ranges.color',
         'ranges.coords'
